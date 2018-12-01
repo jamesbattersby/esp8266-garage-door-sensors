@@ -51,14 +51,12 @@ void loop() {
   static bool door1_state = CLOSED;
   static bool door2_state = CLOSED;
 
-#if WIFI
   if (!mqttClient.connected())
   {
     connectToMqtt();
   }
   mqttClient.loop();
   ArduinoOTA.handle();
-#endif // WIFI
 
   bool state = digitalRead(DOOR_1) ? OPEN : CLOSED;
   if (state != door1_state)
@@ -88,9 +86,7 @@ void notify(int door, bool state)
   char message[20];
   sprintf(message, "%d:%s", door, state == OPEN ? "open" : "closed");
   printf("%s\n", message);
-#if WIFI
   mqttClient.publish("garageDoors", message);
-#endif // WIFI
 }
 
 //-----------------------------------------------------------------------------
@@ -162,6 +158,11 @@ void setUpWifi()
   Serial.println(WiFi.localIP());
 }
 
+//-----------------------------------------------------------------------------
+// connectToMqtt
+//
+// Connect to the MQTT server
+//-----------------------------------------------------------------------------
 void connectToMqtt()
 {
   unsigned char mqttUser[MAX_PW_LEN];
@@ -194,6 +195,11 @@ void connectToMqtt()
   }
 }
 
+//-----------------------------------------------------------------------------
+// callback
+//
+// Process a received mesage.  We are not expected any, but print it out anyway
+//-----------------------------------------------------------------------------
 void callback(char* topic, byte* payload, unsigned int length)
 {
   Serial.print("Message arrived [");
