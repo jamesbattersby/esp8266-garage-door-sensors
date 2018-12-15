@@ -27,6 +27,8 @@ void connectToMqtt();
 
 WiFiClient espClient;
 PubSubClient mqttClient(espClient);
+bool door1State = CLOSED;
+bool door2State = CLOSED;
 
 //-----------------------------------------------------------------------------
 // setup
@@ -34,7 +36,7 @@ PubSubClient mqttClient(espClient);
 // Configure the serial port and IO pins.  Send initial notification.
 //-----------------------------------------------------------------------------
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   setUpWifi();
   pinMode(DOOR_1, INPUT_PULLUP);
   pinMode(DOOR_2, INPUT_PULLUP);
@@ -48,9 +50,6 @@ void setup() {
 // The main loop.  Check the status of the doors every second.
 //-----------------------------------------------------------------------------
 void loop() {
-  static bool door1_state = CLOSED;
-  static bool door2_state = CLOSED;
-
   if (!mqttClient.connected())
   {
     connectToMqtt();
@@ -59,17 +58,17 @@ void loop() {
   ArduinoOTA.handle();
 
   bool state = digitalRead(DOOR_1) ? OPEN : CLOSED;
-  if (state != door1_state)
+  if (state != door1State)
   {
-    door1_state = state;
-    notify(1, door1_state);
+    door1State = state;
+    notify(1, door1State);
   }
 
   state = digitalRead(DOOR_2) ? OPEN : CLOSED;
-  if (state != door2_state)
+  if (state != door2State)
   {
-    door2_state = state;
-    notify(2, door2_state);
+    door2State = state;
+    notify(2, door2State);
   }
 
   delay(1000);
@@ -180,6 +179,7 @@ void connectToMqtt()
     if (mqttClient.connect("GarageDoors", reinterpret_cast<const char *>(mqttUser), reinterpret_cast<const char *>(mqttPassword)))
     {
       Serial.println("connected");
+      mqttClient.subscribe("garageDoorsQuery");
     }
     else
     {
@@ -198,16 +198,14 @@ void connectToMqtt()
 //-----------------------------------------------------------------------------
 // callback
 //
-// Process a received mesage.  We are not expected any, but print it out anyway
+// Process a received mesage.
 //-----------------------------------------------------------------------------
 void callback(char* topic, byte* payload, unsigned int length)
 {
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.print("] ");
-  for (int i = 0; i < (int)length; i++)
+  if (!strcmp(topic, "garageDoorsQuery"))
   {
-    Serial.print((char)payload[i]);
+    // Someone wants to know the current status of the doors
+    notify(1, door1State);
+    notify(2, door2State);
   }
-  Serial.println();
 }
