@@ -37,5 +37,5 @@ All the networking config needs to be put in `include\wifiConfig.h`.  A template
 ![Schematic](schematic.png)
 
 ## Installation
-Before installing, it's probably worth running it up on a bench so you can check how close the magnets need to be to the reed switches for them to operate.  After this, simply glue / screw the reed switches and magnets to each door and surround.  Power on an test.
+Before installing, it's probably worth running it up on a bench so you can check how close the magnets need to be to the reed switches for them to operate.  After this, simply glue / screw the reed switches and magnets to each door and surround.  Power on and test.
 
