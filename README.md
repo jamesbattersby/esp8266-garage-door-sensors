@@ -1,5 +1,5 @@
 <p align=center>
-<a href="https://travis-ci.org/jamesbattersby/esp8266-garage-door-sensors"><img src="https://travis-ci.org/jamesbattersby/esp8266-garage-door-sensors.svg?branch=master" alt="Build Status"></a>
+<a href="https://circleci.com/gh/jamesbattersby/esp8266-garage-door-sensors"><img src="https://circleci.com/gh/jamesbattersby/esp8266-garage-door-sensors.svg?style=shield"></a>
 </p>
 
 # Garage Door Sensors
