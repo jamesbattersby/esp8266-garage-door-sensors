@@ -2,16 +2,13 @@ version: 2.1
 
 jobs:
   build:
-    machine:
-      image: ubuntu-2004:202111-02
+    docker:
+      - image: cimg/python:3.10.4
     steps:
       - checkout
       - run:
           name: "Install packages"
           command: "pip install -U platformio"
-      - run:
-          name: "Install platformio packages"
-          command: "platformio lib -g install 126 794 89"
       - run:
           name: "Copy Config"
           command: "cp include/wifiConfig.tmpl include/wifiConfig.h"
